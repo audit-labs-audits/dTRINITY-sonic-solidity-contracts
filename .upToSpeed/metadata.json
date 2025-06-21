@@ -1,0 +1,26 @@
+{
+  "packageName": "dTRINITY-sonic-solidity-contracts",
+  "packageVersion": 1,
+  "hash": "bef3b2af8c38552a9e697ff8eecfd9bdf3982834",
+  "numberOfTours": 4,
+  "titleOfTours": [
+    "1.1: dTRINITY Codebase Overview",
+    "2.1: Vault Abstractions: Overview",
+    "3.1: Utilities/Common: Odos Swap – Overview",
+    "4.1: Want to learn more?"
+  ],
+  "totalNumberOfSteps": 40,
+  "filesCovered": [
+    "contracts/dlend/README.md",
+    "contracts/dlend/core/protocol/pool/Pool.sol",
+    "contracts/dstable/CollateralVault.sol",
+    "contracts/oracle_aggregator/OracleAggregator.sol",
+    "contracts/common/RescuableVault.sol",
+    "contracts/common/SupportsWithdrawalFee.sol",
+    "contracts/common/SwappableVault.sol",
+    "bot/dlend-liquidator/contracts/common/ILiquidator.sol",
+    "contracts/odos/interface/IOdosRouterV2.sol",
+    "contracts/odos/OdosSwapUtils.sol"
+  ],
+  "numberOfFilesCovered": 10
+}

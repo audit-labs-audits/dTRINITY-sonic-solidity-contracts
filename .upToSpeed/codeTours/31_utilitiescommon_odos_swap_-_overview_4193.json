@@ -1,0 +1,101 @@
+{
+  "title": "3.1: Utilities/Common: Odos Swap – Overview",
+  "id": "1byaVRoymylwk7XpQkAmJyCPBCp2/kty1s9/bM6BvI8=",
+  "originalId": 4193,
+  "position": 6,
+  "steps": [
+    {
+      "type": "highlight",
+      "description": "The Odos integration is handled by two files within the `contracts/odos` directory: `interface/IOdosRouterV2.sol` and `OdosSwapUtils.sol`.",
+      "file": "contracts/odos/interface/IOdosRouterV2.sol",
+      "highlight": [
+        {
+          "start": 1,
+          "end": 1
+        }
+      ],
+      "title": "",
+      "id": "50812"
+    },
+    {
+      "type": "highlight",
+      "description": "This is the interface for the Odos Router V2, generated from the on-chain contract's ABI as noted in the comments. It specifies all data structures and function signatures for executing swaps. We'll now examine the key components.",
+      "file": "contracts/odos/interface/IOdosRouterV2.sol",
+      "highlight": [
+        {
+          "start": 18,
+          "end": 24
+        }
+      ],
+      "title": "",
+      "id": "50813"
+    },
+    {
+      "type": "highlight",
+      "description": "These structs encode parameters for different swap scenarios:\n- `swapTokenInfo`: Defines a standard single-input, single-output swap.\n- `inputTokenInfo` & `outputTokenInfo`: Used in arrays to define inputs and outputs for multi-asset swaps.\n- `permit2Info`: Bundles `Permit2` signature data, enabling swaps without a prior `approve` call.",
+      "file": "contracts/odos/interface/IOdosRouterV2.sol",
+      "highlight": [
+        {
+          "start": 25,
+          "end": 52
+        }
+      ],
+      "title": "",
+      "id": "50814"
+    },
+    {
+      "type": "highlight",
+      "description": "This `swap` function signature defines a primary on-chain router slot for executing trades. \n\nIt takes two key arguments: `tokenInfo`, a struct defining the swap's assets and amounts, and `pathDefinition`, an encoded byte string that specifies the exact trade route across various liquidity sources. The `executor` is the address authorized to perform the swap.",
+      "file": "contracts/odos/interface/IOdosRouterV2.sol",
+      "highlight": [
+        {
+          "start": 98,
+          "end": 103
+        }
+      ],
+      "title": "",
+      "id": "50815"
+    },
+    {
+      "type": "revealFiles",
+      "files": [
+        "contracts/odos/OdosSwapUtils.sol"
+      ],
+      "description": "This utility library, `OdosSwapUtils.sol`, abstracts direct interaction with the Odos router. It wraps the raw function calls from `IOdosRouterV2` into a swap execution flow. The library handles pre- and post-swap operations: it approves the router to spend input tokens, decodes and propagates any revert reasons from a failed swap, and validates the output amount to provide slippage protection.",
+      "title": "",
+      "id": "50816"
+    },
+    {
+      "type": "highlight",
+      "description": "The library defines two custom errors for swap handling. `SwapFailed` is for when a low-level call to the router fails without a reason. `InsufficientOutput` provides slippage protection, reverting if the actual output is less than the expected minimum.",
+      "file": "contracts/odos/OdosSwapUtils.sol",
+      "highlight": [
+        {
+          "start": 15,
+          "end": 17
+        }
+      ],
+      "title": "",
+      "id": "50817"
+    },
+    {
+      "type": "highlight",
+      "description": "This function serves as a wrapper for executing a swap through the Odos router. It handles the full lifecycle of the swap interaction: approving the input token, making a low-level call to the router with the provided `swapData`, decoding any revert reasons for failed transactions, and validating that the received output meets the `exactOut` requirement.",
+      "file": "contracts/odos/OdosSwapUtils.sol",
+      "highlight": [
+        {
+          "start": 27,
+          "end": 33
+        }
+      ],
+      "title": "",
+      "id": "50818"
+    },
+    {
+      "type": "textOnly",
+      "description": "**Summary**\n\n- `IOdosRouterV2.sol` structures all swap parameters into on-chain function slots (single/multi-token, permit-based).\n- `OdosSwapUtils.sol` leverages these slots to execute swaps safely: it approves tokens, performs low-level calls, decodes any revert reason, checks output vs. expected, and returns the final amount.",
+      "title": "",
+      "id": "50819"
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "title": "2.1: Vault Abstractions: Overview",
+  "id": "hzTCVQ5r9L7IYJxNnGeW86Y7ZYb8bNyDPNeu2jeR6Js=",
+  "originalId": 4186,
+  "position": 2,
+  "steps": [
+    {
+      "type": "textOnly",
+      "description": "In `contracts/common`, we have three vault-abstraction base contracts:\n\n* `RescuableVault.sol`\n* `SupportsWithdrawalFee.sol`\n* `SwappableVault.sol`\n\nLet’s explore each in turn.",
+      "title": "",
+      "id": "50743"
+    },
+    {
+      "type": "textOnly",
+      "description": "`RescuableVault.sol` lets an owner recover stray **ERC-20** tokens sent to the vault, while protecting the vault’s core assets defined by inheriting contracts.",
+      "title": "",
+      "id": "50744"
+    },
+    {
+      "type": "highlight",
+      "description": "This doc comment explains the purpose: to allow token rescue and notes that inheritors must implement `getRestrictedRescueTokens()`.",
+      "file": "contracts/common/RescuableVault.sol",
+      "highlight": [
+        {
+          "start": 24,
+          "end": 29
+        }
+      ],
+      "title": "",
+      "id": "50745"
+    },
+    {
+      "type": "highlight",
+      "description": "`getRestrictedRescueTokens()` is a **virtual view method**. The inheriting **vault** lists any tokens that must never be rescued (e.g., its collateral or debt tokens).",
+      "file": "contracts/common/RescuableVault.sol",
+      "highlight": [
+        {
+          "start": 38,
+          "end": 42
+        }
+      ],
+      "title": "",
+      "id": "50746"
+    },
+    {
+      "type": "highlight",
+      "description": "`rescueToken(...)` is `onlyOwner` & `nonReentrant`. It fetches the restricted list, reverts if the token is protected, and otherwise transfers the specified amount to a receiver using `SafeERC20`.",
+      "file": "contracts/common/RescuableVault.sol",
+      "highlight": [
+        {
+          "start": 52,
+          "end": 71
+        }
+      ],
+      "title": "",
+      "id": "50747"
+    },
+    {
+      "type": "textOnly",
+      "description": "`SupportsWithdrawalFee.sol` implements a **BPS**-based withdrawal fee, with events and internal setter/getter hooks for inheriting vaults.",
+      "title": "",
+      "id": "50748"
+    },
+    {
+      "type": "highlight",
+      "description": "`withdrawalFeeBps_` stores the fee in basis points. `WithdrawalFeeSet` fires when the rate is configured; `WithdrawalFee` fires when a fee is charged on withdrawal.",
+      "file": "contracts/common/SupportsWithdrawalFee.sol",
+      "highlight": [
+        {
+          "start": 12,
+          "end": 19
+        }
+      ],
+      "title": "",
+      "id": "50749"
+    },
+    {
+      "type": "highlight",
+      "description": "`_initializeWithdrawalFee(initialFeeBps)` is called at setup. It validates `initialFeeBps <= _maxWithdrawalFeeBps()`, sets the state, and emits `WithdrawalFeeSet`.",
+      "file": "contracts/common/SupportsWithdrawalFee.sol",
+      "highlight": [
+        {
+          "start": 31,
+          "end": 38
+        }
+      ],
+      "title": "",
+      "id": "50750"
+    },
+    {
+      "type": "highlight",
+      "description": "`_setWithdrawalFee(newFeeBps)` lets the vault update its fee rate (with the same max-fee guard) and emits `WithdrawalFeeSet`.",
+      "file": "contracts/common/SupportsWithdrawalFee.sol",
+      "highlight": [
+        {
+          "start": 44,
+          "end": 51
+        }
+      ],
+      "title": "",
+      "id": "50751"
+    },
+    {
+      "type": "highlight",
+      "description": "`getWithdrawalFeeBps()` is a public view to read the currently configured fee in BPS.",
+      "file": "contracts/common/SupportsWithdrawalFee.sol",
+      "highlight": [
+        {
+          "start": 104,
+          "end": 106
+        }
+      ],
+      "title": "",
+      "id": "50752"
+    },
+    {
+      "type": "textOnly",
+      "description": "`SwappableVault.sol` standardizes slippage-protected on-chain token swaps by defining an abstract hook and a sanity-checking wrapper.",
+      "title": "",
+      "id": "50753"
+    },
+    {
+      "type": "highlight",
+      "description": "Custom `error` declarations capture specific swap failure modes: overspending input, wrong output amount, or no balance increase.",
+      "file": "contracts/common/SwappableVault.sol",
+      "highlight": [
+        {
+          "start": 29,
+          "end": 44
+        }
+      ],
+      "title": "",
+      "id": "50754"
+    },
+    {
+      "type": "highlight",
+      "description": "`_swapExactOutputImplementation(...)` is **abstract**. Inheritors must implement the actual router or DEX logic, returning the exact `amountIn` used.",
+      "file": "contracts/common/SwappableVault.sol",
+      "highlight": [
+        {
+          "start": 59,
+          "end": 67
+        }
+      ],
+      "title": "",
+      "id": "50755"
+    },
+    {
+      "type": "highlight",
+      "description": "`_swapExactOutput(...)` wraps the implementation: it snapshots token balances before/after, calls the hook, then enforces that spent input ≤ `amountInMaximum`, that the returned `amountIn` matches the balance delta, and that the output delta equals `amountOut`.",
+      "file": "contracts/common/SwappableVault.sol",
+      "highlight": [
+        {
+          "start": 83,
+          "end": 146
+        }
+      ],
+      "title": "",
+      "id": "50756"
+    },
+    {
+      "type": "textOnly",
+      "description": "These three base contracts cover token rescue, BPS-based withdrawal fees, and secure swap logic. `Vault implementations` simply inherit and fill in the missing hooks.",
+      "title": "",
+      "id": "50757"
+    }
+  ]
+}

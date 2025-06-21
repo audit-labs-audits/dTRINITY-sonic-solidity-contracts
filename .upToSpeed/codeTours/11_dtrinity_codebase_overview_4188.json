@@ -1,0 +1,181 @@
+{
+  "title": "1.1: dTRINITY Codebase Overview",
+  "id": "uxQ0YpHr4DAdwfsRUBDjH42AX9e6k/LdMeOKXfMOor4=",
+  "originalId": 4188,
+  "position": 1,
+  "steps": [
+    {
+      "type": "textOnly",
+      "description": "This walkthrough provides a high-level overview of the `dTRINITY Sonic Contracts` codebase, covering its major pillars: on-chain protocols (`dLEND`, `dStable`), `OracleAggregator`, common vault utilities, yield-strategy vaults, and the off-chain liquidation bot.",
+      "title": "",
+      "id": "49602"
+    },
+    {
+      "type": "textOnly",
+      "description": "Project layout  \n\nAll on-chain contracts live under `contracts/`, organized into five top-level packages:\n- `dlend` (money market)\n- `dstable` (stablecoin)\n- `oracle_aggregator` (price feeds)\n- `common` (shared utilities & vault abstractions)\n- `vaults` (yield-strategy vaults)  \n\nOff-chain tooling resides in `bot/dlend-liquidator/`.",
+      "title": "",
+      "id": "49603"
+    },
+    {
+      "type": "highlight",
+      "description": "`dLEND` is a fork of `Aave v3`, powering supply, borrow, flash loans, and liquidations.",
+      "file": "contracts/dlend/README.md",
+      "highlight": [
+        {
+          "start": 1,
+          "end": 4
+        }
+      ],
+      "title": "",
+      "id": "49604"
+    },
+    {
+      "type": "highlight",
+      "description": "`Pool.sol` declares the `Pool` contract and **NatSpec**, marking it as the main entry point for `supply`, `withdraw`, `borrow`, `repay`, `swap`, `liquidate`, and `flash-loan` operations.",
+      "file": "contracts/dlend/core/protocol/pool/Pool.sol",
+      "highlight": [
+        {
+          "start": 38,
+          "end": 45
+        }
+      ],
+      "title": "",
+      "id": "49605"
+    },
+    {
+      "type": "highlight",
+      "description": "`CollateralVault` is the abstract base for any contract managing collateral, setting up roles and oracle integration.",
+      "file": "contracts/dstable/CollateralVault.sol",
+      "highlight": [
+        {
+          "start": 28,
+          "end": 36
+        }
+      ],
+      "title": "",
+      "id": "49606"
+    },
+    {
+      "type": "highlight",
+      "description": "`deposit()` enforces only supported collaterals can be deposited; `withdraw()`/`withdrawTo()` are restricted to the `COLLATERAL_WITHDRAWER_ROLE`.",
+      "file": "contracts/dstable/CollateralVault.sol",
+      "highlight": [
+        {
+          "start": 84,
+          "end": 108
+        }
+      ],
+      "title": "",
+      "id": "49607"
+    },
+    {
+      "type": "highlight",
+      "description": "`OracleAggregator` holds the `assetOracles` mapping and immutable **base currency parameters**.",
+      "file": "contracts/oracle_aggregator/OracleAggregator.sol",
+      "highlight": [
+        {
+          "start": 28,
+          "end": 33
+        }
+      ],
+      "title": "",
+      "id": "49608"
+    },
+    {
+      "type": "highlight",
+      "description": "`setOracle()` lets `ORACLE_MANAGER_ROLE` assign an oracle for an asset, enforcing matching base units.",
+      "file": "contracts/oracle_aggregator/OracleAggregator.sol",
+      "highlight": [
+        {
+          "start": 78,
+          "end": 83
+        }
+      ],
+      "title": "",
+      "id": "49609"
+    },
+    {
+      "type": "highlight",
+      "description": "`getAssetPrice()` returns the current price of an asset, reverting if the feed is not alive.",
+      "file": "contracts/oracle_aggregator/OracleAggregator.sol",
+      "highlight": [
+        {
+          "start": 127,
+          "end": 133
+        }
+      ],
+      "title": "",
+      "id": "49610"
+    },
+    {
+      "type": "highlight",
+      "description": "`rescueToken()` lets the contract owner retrieve any non-restricted **ERC-20** tokens accidentally sent to the vault.",
+      "file": "contracts/common/RescuableVault.sol",
+      "highlight": [
+        {
+          "start": 52,
+          "end": 60
+        }
+      ],
+      "title": "",
+      "id": "49611"
+    },
+    {
+      "type": "highlight",
+      "description": "`_calculateWithdrawalFee()` computes the withdrawal fee in asset terms using the configured basis points.",
+      "file": "contracts/common/SupportsWithdrawalFee.sol",
+      "highlight": [
+        {
+          "start": 59,
+          "end": 64
+        }
+      ],
+      "title": "",
+      "id": "49612"
+    },
+    {
+      "type": "highlight",
+      "description": "`_swapExactOutput()` wraps the underlying swap implementation with sanity checks on spent and received token amounts.",
+      "file": "contracts/common/SwappableVault.sol",
+      "highlight": [
+        {
+          "start": 83,
+          "end": 91
+        }
+      ],
+      "title": "",
+      "id": "49613"
+    },
+    {
+      "type": "textOnly",
+      "description": "Yield-strategy vaults under `contracts/vaults` provide six main families:\n- `atoken_wrapper`: static AToken (EIP-4626) wrappers\n- `dloop`: leveraged vaults on dLEND\n- `dpool`: Curve LP-token vaults\n- `dstake`: staking wrapper with dynamic adapters\n- `rewards_claimable`: generic claimable-rewards abstraction\n- `vesting`: ERC20 vesting as soul-bound NFTs",
+      "title": "",
+      "id": "49614"
+    },
+    {
+      "type": "highlight",
+      "description": "`ILiquidator` defines the `liquidate(...)` interface used by all on-chain liquidator implementations in the off-chain bot.",
+      "file": "bot/dlend-liquidator/contracts/common/ILiquidator.sol",
+      "highlight": [
+        {
+          "start": 20,
+          "end": 28
+        }
+      ],
+      "title": "",
+      "id": "49615"
+    },
+    {
+      "type": "textOnly",
+      "description": "The off-chain liquidation bot includes Aave v3 adapters under `bot/dlend-liquidator/contracts/aave-v3` and swap helpers under `bot/dlend-liquidator/contracts/odos`, orchestrated by **TypeScript** scripts.",
+      "title": "",
+      "id": "49616"
+    },
+    {
+      "type": "textOnly",
+      "description": "Summary\n\n- `dLEND` provides core money-market functionality (`Aave v3 fork`)\n- `dStable` issues and manages a collateralized stablecoin\n- `OracleAggregator` unifies price feeds from multiple sources\n- `Common utilities` support token rescue, fees, and swaps\n- `Vaults` package various yield strategies under a common abstraction\n- `Off-chain bot` automates liquidations via flash loans and on-chain swaps",
+      "title": "",
+      "id": "49617"
+    }
+  ]
+}
